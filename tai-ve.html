@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bộ đi kèm</title>
+<style>
+:root{
+  --bg:#f6ecdd; --panel:#fffaf0; --panel2:#f3e4cd; --line:#e2cfae; --line2:#d3b98e;
+  --fg:#30180e; --muted:#8a6a51; --accent:#c4631f; --accent-fg:#fff8ec;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --bg:#140d0a; --panel:#1d1310; --panel2:#261913; --line:#3a2720; --line2:#4d342a;
+  --fg:#f3e3d4; --muted:#b2917c; --accent:#e8913f; --accent-fg:#1a0f08;
+}}
+:root[data-theme="dark"]{
+  --bg:#140d0a; --panel:#1d1310; --panel2:#261913; --line:#3a2720; --line2:#4d342a;
+  --fg:#f3e3d4; --muted:#b2917c; --accent:#e8913f; --accent-fg:#1a0f08;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font-family:"Be Vietnam Pro",ui-sans-serif,system-ui,"Segoe UI",sans-serif;
+  line-height:1.6;padding:40px 16px}
+.wrap{max-width:620px;margin:0 auto}
+h1{font-size:22px;margin:0 0 6px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 26px}
+a.go{display:block;background:var(--accent);color:var(--accent-fg);text-decoration:none;
+  padding:14px 18px;border-radius:12px;font-weight:700;margin-bottom:26px}
+.f{display:flex;gap:12px;align-items:flex-start;background:var(--panel);
+  border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;
+  text-decoration:none;color:inherit}
+.f:hover{border-color:var(--line2)}
+.f b{display:block;font-size:14.5px}
+.f span{display:block;color:var(--muted);font-size:12.5px}
+.ic{font-size:20px;line-height:1.4}
+h2{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  font-weight:700;margin:28px 0 10px}
+.note{background:var(--panel2);border:1px solid var(--line);border-radius:12px;
+  padding:13px 15px;font-size:13px;color:var(--muted);margin-top:26px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Auto Edit Studio — bộ đi kèm</h1>
+<p class="sub">Mấy file dùng chung với app. Bấm là tải về máy đang ngồi.</p>
+
+<a class="go" href="./">← Mở app dựng clip</a>
+
+<h2>Mẫu — nạp vào app ở tab 4</h2>
+
+<a class="f" href="mau-ca-do-de.json" download>
+  <span class="ic">📄</span>
+  <span><b>mau-ca-do-de.json</b><span>Mẫu gốc: ca đỡ đẻ thành công</span></span>
+</a>
+<a class="f" href="mau-1-giong-gia-dinh.json" download>
+  <span class="ic">📄</span>
+  <span><b>mau-1-giong-gia-dinh.json</b><span>Giọng người nhà kể lại</span></span>
+</a>
+<a class="f" href="mau-2-giong-e-kip.json" download>
+  <span class="ic">📄</span>
+  <span><b>mau-2-giong-e-kip.json</b><span>Giọng ê-kíp, trân trọng hơn</span></span>
+</a>
+
+<h2>Video kết</h2>
+
+<a class="f" href="OUTTRO-PK-AN-SINH.mp4" download>
+  <span class="ic">🎬</span>
+  <span><b>OUTTRO-PK-AN-SINH.mp4</b><span>Kéo thẳng vào app cùng với ảnh — app tự nhận ra là outro và dán vào cuối clip</span></span>
+</a>
+
+<h2>Hướng dẫn &amp; trọn bộ</h2>
+
+<a class="f" href="DOC-TRUOC-KHI-DUNG.txt">
+  <span class="ic">📘</span>
+  <span><b>DOC-TRUOC-KHI-DUNG.txt</b><span>Đọc 2 phút là dùng được</span></span>
+</a>
+<a class="f" href="AUTO-EDIT-STUDIO-bo-gui-di.zip" download>
+  <span class="ic">📦</span>
+  <span><b>AUTO-EDIT-STUDIO-bo-gui-di.zip</b><span>Cả bộ để gửi cho người khác — app, mẫu, outro, hướng dẫn, skill</span></span>
+</a>
+
+<div class="note">
+  App chạy hẳn trong trình duyệt, ảnh của bạn không đi đâu cả. Chỉ riêng ô key ElevenLabs
+  (nếu dùng) là lưu trong trình duyệt của máy đang ngồi — sang máy khác phải dán lại.
+  Nút “AI làm hết” chỉ chạy ở bản trên Claude, bản này bạn tự điền các ô.
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,130 @@
+===========================================================
+  AUTO EDIT STUDIO — tự dựng clip dọc từ ảnh ca đỡ đẻ
+  Đọc 2 phút là dùng được. Không cần cài gì, không cần mạng.
+===========================================================
+
+TRONG THƯ MỤC NÀY CÓ GÌ
+
+  auto-edit-studio.html   <- chính nó là cả app. Nháy đúp để mở.
+  mau-ca-do-de.json       <- "mẫu": kịch bản + nhịp cắt + màu chữ + nhạc sẵn.
+  OUTTRO.mp4              <- video kết thương hiệu (nếu bạn gửi kèm).
+  DOC-TRUOC-KHI-DUNG.txt  <- file bạn đang đọc.
+
+
+LÀM MỘT CLIP — 5 BƯỚC
+
+  1. Nháy đúp "auto-edit-studio.html".
+     Nó mở trong Chrome hoặc Edge như một trang web bình thường.
+     Dùng Chrome hoặc Edge. Firefox xuất video không được.
+
+  2. Kéo cả thư mục ảnh/video của ca đó vào ô to giữa màn hình.
+     Thả được 50-60 ảnh một lúc. Kéo luôn file OUTTRO.mp4 vào cùng
+     - app tự nhận ra nó là outro nhờ chữ "outtro"/"outro" trong tên file,
+     và tự dán vào cuối clip.
+
+  3. Sang tab "2 Tự động edit". Điền tên bác sĩ, tên bệnh viện/phòng khám.
+     Đọc lại 9 dòng phụ đề, sửa chữ nào không thích. Bấm DUYỆT.
+
+     Nếu bạn đã tự viết sẵn cả bài: dán nguyên vào ô "Có sẵn cả bài?
+     Dán vào đây" ở ngay đầu tab 2, rồi bấm "Tách thành 5 nhịp".
+     App tự cắt câu, tự chia vào từng nhịp và tự rút câu nào dài hơn
+     36 ký tự. Nhớ đọc lại rồi bấm DUYỆT.
+     Muốn chỉ định rõ câu nào vào nhịp nào thì ghi nhãn ở đầu dòng,
+     kiểu "Nhả vía:" hoặc "Gia đình:".
+
+     Bí câu mở đầu thì bấm "Gợi 3 câu móc". App đưa 3 câu thuộc 3 kiểu
+     khác nhau (tò mò / kể / cảm xúc / so sánh / chứng kiến), bấm vào
+     câu nào là nó nhảy vào ô móc. Bấm nút nhiều lần ra bộ khác.
+     Điền tên bác sĩ trước thì trong 3 câu sẽ có một câu nhắc tên.
+
+     Dưới các ô kịch bản có thẻ "Soát chữ". Nó tự hiện khi trong bài
+     có chữ dễ gây chuyện - chia hai mức:
+       đỏ  = lời hứa (cam kết, 100%, chữa khỏi, tốt nhất, không đau).
+             Nhóm này nên đổi hẳn, nhất là với Trang phòng khám.
+       vàng = từ nặng hình (máu, biến chứng, khâu, cấp cứu).
+             Không sai, chỉ là clip mừng mà nghe thành clip đáng sợ.
+     Thẻ chỉ nhắc, không sửa hộ và không chặn bạn bấm Duyệt. Sửa chữ
+     trong ô là thẻ tự cập nhật ngay.
+
+  4. Tab "3 Xem & chỉnh": bấm play xem thử. Không vừa ý cảnh nào thì
+     đổi ảnh, đổi chữ ngay ở đó.
+
+  5. Tab "4 Xuất video": bấm "Bắt đầu xuất", chờ đúng bằng độ dài clip
+     (clip 42 giây thì chờ 42 giây). ĐỪNG chuyển sang cửa sổ khác
+     trong lúc chờ, nếu không video sẽ bị đứng giữa.
+     Xong, file mp4 rơi vào thư mục Tải xuống.
+
+
+ĐỘ DÀI CLIP: 28 GIÂY HAY 42 GIÂY
+
+  Ở tab 2, mục "Cách dựng", dưới thanh kéo độ dài có 3 nút sẵn:
+  28s - 42s - 60s. Mặc định app để 42s.
+
+  Khung kịch bản của app vốn dựng cho clip 15-30 giây, và thứ đẩy
+  clip đi xa nhất là người xem HẾT rồi xem lại. Clip càng dài thì
+  càng ít người trụ tới cuối.
+
+  Cách chọn cho nhanh:
+    - ảnh đẹp nhiều, muốn kể đủ cả nhà chờ ngoài cửa  -> 42s
+    - muốn chắc ăn người ta xem hết                    -> 28s
+    - có OUTTRO dài, hoặc ca nhiều chi tiết            -> 60s
+
+  Bấm 28s thì mọi nhịp tự co lại theo, riêng câu móc vẫn giữ đủ
+  2.6 giây để người ta kịp đọc.
+
+
+FILE XUẤT RA KHÔNG CÓ TIẾNG — ĐÚNG RỒI, KHÔNG PHẢI LỖI
+
+  Ô "Tiếng trong file xuất" để sẵn là "Không tiếng gì cả".
+  Lý do: nhạc trong thư viện CapCut và TikTok chỉ được cấp phép khi
+  bạn chèn ngay trong hai app đó. Chèn sẵn ở ngoài rồi mang vào
+  là đường dễ bị tắt tiếng hoặc chặn, nhất là với Trang của phòng khám.
+
+  Nên làm: xuất file không tiếng -> kéo vào CapCut -> chọn nhạc bên đó
+  (nếu đăng cho Trang phòng khám thì lọc tag "Thương mại") -> xuất lại.
+
+  Nếu bạn muốn nghe thử có nhạc ngay trong app: đổi ô đó thành
+  "Đủ tiếng". App có 6 bài nhạc tự sinh, không vướng bản quyền ai cả.
+  Chỉ là chèn nhạc ở CapCut vẫn hợp hơn vì nhạc bên đó đang trend.
+
+
+MẪU .JSON LÀ GÌ
+
+  Mẫu là một file nhỏ chỉ chứa CÁCH LÀM: khung kịch bản, tên bác sĩ,
+  nhịp cắt, màu chữ, nhạc, thẻ cuối. Nó KHÔNG chứa ảnh.
+
+  Nạp mẫu:  tab "4 Xuất video" -> cuối trang, mục "Mẫu — gửi cho
+            người khác" -> bấm "Mở mẫu .json" -> chọn mau-ca-do-de.json.
+            Sau đó quay về tab 2 xem lại kịch bản rồi duyệt.
+
+  Lưu mẫu:  chỉnh app theo ý bạn, rồi bấm "Lưu mẫu .json".
+            Gửi file đó cho người khác là họ ra clip cùng kiểu.
+
+
+MẤY CHỖ DỄ VƯỚNG
+
+  - Xuất xong clip bị đứng hình giữa: do bạn chuyển cửa sổ trong lúc xuất.
+    Xuất lại và để yên tab đó trên màn hình.
+
+  - Thả 60 ảnh vào thì máy chậm vài giây mới hiện: bình thường,
+    app đang thu nhỏ ảnh lại cho nhẹ.
+
+  - Hai ảnh gần giống nhau bị bỏ đi mất: cố ý, vì chụp liên thanh ra
+    cả chùm ảnh giống hệt. Muốn giữ hết thì bỏ tick ô
+    "Lọc ảnh trùng trước khi dựng" ở tab 2.
+
+  - Chữ Việt bị vuông hoặc mất dấu: máy chưa có font. Mở lúc có mạng
+    một lần là xong, hoặc cứ dùng - app đã có font dự phòng sẵn.
+
+  - Nút "AI làm hết" không bấm được: nút đó chỉ chạy ở bản trên web
+    của Claude. Bản file rời này bạn tự điền các ô - mọi thứ khác
+    chạy y nguyên.
+
+
+MỘT LỜI NHẮC VỀ ẢNH BỆNH NHÂN
+
+  Ảnh ca đỡ đẻ có mặt sản phụ, mặt nhân viên, và nhiều khi đọc được
+  cả vòng tay số hồ sơ. Trước khi đăng, nhớ hai việc:
+    - đã xin phép gia đình chưa;
+    - cần che số hồ sơ / thẻ tên thì vào tab 3, mục
+      "Che thẻ tên / thông tin", bật lên rồi kéo ô mờ về đúng chỗ.

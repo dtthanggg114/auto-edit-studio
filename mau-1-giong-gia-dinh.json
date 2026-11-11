@@ -1,0 +1,48 @@
+{
+  "aes_mau": 1,
+  "ten": "ca_nha_cho_con",
+  "ngay": "2026-11-04",
+  "tpl": "do_de",
+  "beats": {
+    "hook": [
+      "Bố ơi, nghe thấy con khóc chưa?"
+    ],
+    "khoanhkhac": [
+      "Con ra rồi, mẹ được gặp con rồi.",
+      "Tiếng khóc đầu, mẹ cũng khóc.",
+      "Da kề da, con nằm sát bên mẹ."
+    ],
+    "giadinh": [
+      "Ngoài cửa, bố và ông bà vẫn đợi.",
+      "Nghe con khóc, cả nhà mới bật cười."
+    ],
+    "chaomung": [
+      "Chào con, cả nhà chờ con mãi đấy."
+    ],
+    "nhavia": [
+      "Nhả vía may mắn cho các mẹ bầu nhé.",
+      "Cả nhà cảm ơn ê kíp nhiều lắm."
+    ]
+  },
+  "bs": "",
+  "bv": "",
+  "pk": "",
+  "be": "",
+  "emoji": true,
+  "total": 42,
+  "hold": 2.5,
+  "xf": 0.35,
+  "fit": "blur",
+  "look": true,
+  "dedup": true,
+  "subs": true,
+  "subMax": 36,
+  "subColor": "#ffb6d5",
+  "music": "am_ap",
+  "fx": true,
+  "card": true,
+  "cardT": "TÊN KÊNH CỦA BẠN",
+  "cardS": "Chúc mẹ tròn con vuông",
+  "cardN": "Theo dõi để xem thêm khoảnh khắc đầu đời",
+  "cardC": "Comment \"NHẬN VÍA\""
+}
