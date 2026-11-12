@@ -728,22 +728,23 @@ function blurBg(src,sw,sh,a){
 }
 function drawVisual(c,t,al){
   const a=c.assetId?assets.get(c.assetId):null;
-  const p=clamp((t-c.start)/Math.max(.001,c.dur),0,1), k=eff(c.effect,p);
   let src=null,sw=0,sh=0;
   if(a&&a.el){ src=a.el; sw=iw(src); sh=ih(src) }
   ctx.save();
   if(al!=null)ctx.globalAlpha=clamp(al,0,1);
   if(!src||!sw){ drawCardBg(c.bg); ctx.restore(); return }
+  const g=khungAnh(c,t);
+  if(!g){ drawCardBg(c.bg); ctx.restore(); return }
   const lech=Math.abs(sw/sh-W/H)>.03;
   if(c.fit==="blur"&&lech){
     try{ ctx.drawImage(blurBg(src,sw,sh,a),0,0,W,H) }catch(e){}
-    const sc=Math.min(W/sw,H/sh)*k.s, dw=sw*sc, dh=sh*sc;
     ctx.shadowColor="rgba(0,0,0,.55)"; ctx.shadowBlur=46;
-    try{ ctx.drawImage(src,(W-dw)/2+k.x*W,(H-dh)/2+k.y*H,dw,dh) }catch(e){}
+    try{ ctx.drawImage(src,g.dx,g.dy,g.dw,g.dh) }catch(e){}
+    ctx.shadowBlur=0; ctx.shadowColor="transparent";
   }else{
-    const sc=Math.max(W/sw,H/sh)*k.s, dw=sw*sc, dh=sh*sc;
-    try{ ctx.drawImage(src,(W-dw)/2+k.x*W,(H-dh)/2+k.y*H,dw,dh) }catch(e){ drawCardBg(c.bg) }
+    try{ ctx.drawImage(src,g.dx,g.dy,g.dw,g.dh) }catch(e){ drawCardBg(c.bg) }
   }
+  drawCheVung(c,g);
   ctx.restore();
 }
 /* màu ấm + sáng nhẹ trên + tối góc — tông bệnh viện xanh lạnh nhìn ấm hẳn */
@@ -762,6 +763,117 @@ function drawLook(){
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H); ctx.restore() }
 }
 /* che thẻ tên / thông tin bệnh viện: làm ô vuông hóa đúng một vùng, áp cho mọi khung hình */
+/* ====================== ô che riêng của từng cảnh ======================
+   P.mask bên dưới là MỘT ô áp cho mọi khung hình — chỉ dùng được khi nhãn
+   nằm cùng chỗ ở mọi tấm. Ảnh ca đỡ đẻ thì nhãn mỗi tấm một chỗ, mà trong
+   clip video nhãn còn chạy theo máy quay. Nên mỗi cảnh có ô che riêng,
+   lưu theo toạ độ ẢNH GỐC (u,v,w,h tính theo phần của ảnh) — cảnh zoom hay
+   trôi bao nhiêu thì ô vẫn bám đúng chỗ đó của ảnh.                      */
+function khungAnh(c,t){
+  const a=c.assetId?assets.get(c.assetId):null;
+  if(!a||!a.el)return null;
+  const sw=iw(a.el), sh=ih(a.el); if(!sw||!sh)return null;
+  const p=clamp((t-c.start)/Math.max(.001,c.dur),0,1), k=eff(c.effect,p);
+  const lech=Math.abs(sw/sh-W/H)>.03;
+  const sc=(c.fit==="blur"&&lech?Math.min(W/sw,H/sh):Math.max(W/sw,H/sh))*k.s;
+  const dw=sw*sc, dh=sh*sc;
+  return { el:a.el, sw:sw, sh:sh, dw:dw, dh:dh, dx:(W-dw)/2+k.x*W, dy:(H-dh)/2+k.y*H };
+}
+const cheNho=document.createElement("canvas"), cheTo=document.createElement("canvas");
+function drawCheVung(c,g){
+  const m=c.mask; if(!m||!g||!(m.w>0)||!(m.h>0))return;
+  const su=m.u*g.sw, sv=m.v*g.sh;
+  const sW=Math.max(2,m.w*g.sw), sH=Math.max(2,m.h*g.sh);
+  const tx=g.dx+m.u*g.dw, ty=g.dy+m.v*g.dh;
+  const tW=Math.max(2,m.w*g.dw), tH=Math.max(2,m.h*g.dh);
+  const nb=10, mb=Math.max(2,Math.round(nb*sH/sW));
+  cheNho.width=nb; cheNho.height=mb;
+  const nc=cheNho.getContext("2d"); nc.imageSmoothingEnabled=true;
+  try{ nc.clearRect(0,0,nb,mb); nc.drawImage(g.el,su,sv,sW,sH,0,0,nb,mb) }catch(e){ return }
+  ctx.save(); ctx.imageSmoothingEnabled=false;
+  if(!m.vai){
+    try{ ctx.drawImage(cheNho,0,0,nb,mb,tx,ty,tW,tH) }catch(e){}
+    ctx.restore(); return;
+  }
+  /* chỉ làm mờ chỗ nào là VẢI TRẮNG hoặc vết tối trên vải — da người và khăn
+     màu giữ nguyên, nhờ vậy ô che lấy rộng trùm cả đường đi của nhãn cũng không
+     ăn vào mặt bé. Ngưỡng này dò trên chính bộ ảnh VIDEO 3. */
+  const bw=Math.min(480,Math.max(24,Math.round(sW))), bh=Math.max(2,Math.round(bw*sH/sW));
+  cheTo.width=bw; cheTo.height=bh;
+  const tc=cheTo.getContext("2d",{willReadFrequently:true});
+  let goc,mo;
+  try{
+    tc.imageSmoothingEnabled=true; tc.clearRect(0,0,bw,bh);
+    tc.drawImage(g.el,su,sv,sW,sH,0,0,bw,bh);
+    goc=tc.getImageData(0,0,bw,bh);
+    tc.imageSmoothingEnabled=false; tc.clearRect(0,0,bw,bh);
+    tc.drawImage(cheNho,0,0,nb,mb,0,0,bw,bh);
+    mo=tc.getImageData(0,0,bw,bh);
+  }catch(e){
+    try{ ctx.drawImage(cheNho,0,0,nb,mb,tx,ty,tW,tH) }catch(e2){}
+    ctx.restore(); return;
+  }
+  const A=goc.data, B=mo.data;
+  for(let i=0;i<A.length;i+=4){
+    const r=A[i], gg=A[i+1], b=A[i+2];
+    const mx=Math.max(r,gg,b), mn=Math.min(r,gg,b), l=(r*77+gg*150+b*29)>>8;
+    const laVai=(mx-mn)<48&&l>115, laVet=l>45&&l<=115&&(mx-mn)<55;
+    if(!(laVai||laVet)){ B[i]=r; B[i+1]=gg; B[i+2]=b }
+  }
+  tc.putImageData(mo,0,0);
+  try{ ctx.drawImage(cheTo,0,0,bw,bh,tx,ty,tW,tH) }catch(e){}
+  ctx.restore();
+}
+/* ---- khoanh ô che bằng chuột ngay trên khung xem ---- */
+let khoanh=null;
+function khungToaDo(e){
+  const r=cv.getBoundingClientRect();
+  return { x:(e.clientX-r.left)/Math.max(1,r.width)*W, y:(e.clientY-r.top)/Math.max(1,r.height)*H };
+}
+function batDauKhoanh(c){
+  if(playing)pause();
+  if(time<c.start||time>=c.start+c.dur){ time=clamp(c.start+Math.min(.45,c.dur/2),0,dur()); syncVideo(time); ui_time() }
+  khoanh={id:c.id,a:null,b:null};
+  cv.style.cursor="crosshair";
+  toast("Kéo chuột trên khung xem, trùm kín chỗ cần che");
+  draw(time);
+}
+function thoiKhoanh(){ khoanh=null; cv.style.cursor=""; draw(time) }
+function veVienKhoanh(){
+  const c=P.clips.video.find(x=>x.id===khoanh.id), g=c&&khungAnh(c,time);
+  ctx.save(); ctx.setLineDash([16,11]); ctx.lineWidth=4; ctx.strokeStyle="#ffd166";
+  if(khoanh.a&&khoanh.b){
+    const a=khoanh.a, b=khoanh.b;
+    ctx.strokeRect(Math.min(a.x,b.x),Math.min(a.y,b.y),Math.abs(b.x-a.x),Math.abs(b.y-a.y));
+  }else if(c&&c.mask&&g){
+    const m=c.mask; ctx.strokeRect(g.dx+m.u*g.dw,g.dy+m.v*g.dh,m.w*g.dw,m.h*g.dh);
+  }
+  ctx.restore();
+}
+cv.addEventListener("pointerdown",e=>{
+  if(!khoanh)return; e.preventDefault();
+  try{ cv.setPointerCapture(e.pointerId) }catch(err){}
+  khoanh.a=khungToaDo(e); khoanh.b=khoanh.a; draw(time);
+});
+cv.addEventListener("pointermove",e=>{ if(!khoanh||!khoanh.a)return; khoanh.b=khungToaDo(e); draw(time) });
+cv.addEventListener("pointerup",e=>{
+  if(!khoanh)return;
+  if(!khoanh.a){ thoiKhoanh(); return }
+  khoanh.b=khungToaDo(e);
+  const c=P.clips.video.find(x=>x.id===khoanh.id), g=c&&khungAnh(c,time);
+  const a=khoanh.a, b=khoanh.b||khoanh.a;
+  khoanh=null; cv.style.cursor="";
+  if(!c||!g){ toast("Cảnh này chưa có ảnh để che"); draw(time); return }
+  const x0=Math.min(a.x,b.x), y0=Math.min(a.y,b.y), x1=Math.max(a.x,b.x), y1=Math.max(a.y,b.y);
+  if(x1-x0<14||y1-y0<14){ toast("Vùng quá nhỏ — kéo rộng hơn"); draw(time); ui_right(); return }
+  snapshot();
+  const cu=c.mask;
+  c.mask={ u:+((x0-g.dx)/g.dw).toFixed(4), v:+((y0-g.dy)/g.dh).toFixed(4),
+           w:+((x1-x0)/g.dw).toFixed(4), h:+((y1-y0)/g.dh).toFixed(4), vai:!!(cu&&cu.vai) };
+  draw(time); ui_right(); ui_timeline();
+  toast("Đã che. Phát lại xem ô có bám đúng chỗ không");
+});
+window.addEventListener("keydown",e=>{ if(khoanh&&e.key==="Escape"){ e.preventDefault(); thoiKhoanh(); toast("Bỏ khoanh") } },true);
 const maskCv=document.createElement("canvas");
 function drawMask(k){
   const m=P.mask; if(!m||!m.on)return;
@@ -845,6 +957,7 @@ function draw(t){
   drawMask(k);
   for(const l of at("text",t)) (l.style==="card"?drawCard:drawPop)(l,t);
   if(P.sub.on){const s=topAt("sub",t); if(s)drawSub(s)}
+  if(!exporting&&khoanh)veVienKhoanh();
 }
 
 /* ============================ phát / tua ============================ */
@@ -2371,7 +2484,8 @@ function ui_left(){
         '<label class="fld"><span>Rộng <b>'+m.w+'%</b></span><input type="range" data-m="w" min="4" max="100" value="'+m.w+'"></label>'+
         '<label class="fld"><span>Cao <b>'+m.h+'%</b></span><input type="range" data-m="h" min="1" max="60" value="'+m.h+'"></label>'+
         '<div class="hint">Ảnh của bạn có thẻ tên và thông tin bệnh viện đọc được trên khăn quấn bé. '+
-        'Nếu đăng công khai thì kéo ô này lên đúng chỗ đó. Ô áp cho mọi khung hình trong clip.</div>'+
+        'Nếu đăng công khai thì kéo ô này lên đúng chỗ đó. Ô áp cho mọi khung hình trong clip.<br>'+
+        '<b style="color:var(--fg)">Nhãn mỗi tấm một chỗ?</b> Bấm vào từng cảnh trên timeline rồi dùng <b style="color:var(--fg)">“Che thẻ tên”</b> ở cột phải — ô che riêng từng cảnh, bám theo ảnh.</div>'+
       '</div>'+
 
       '<div class="ttl">Màu &amp; không khí</div>'+
@@ -2587,6 +2701,15 @@ function ui_right(){
         f("Tốc độ <b>"+(c.speed||1)+"x</b>",rng("speed",c.speed||1,.5,2,.1))+
         f("Cắt từ giây <b>"+(c.in||0).toFixed(1)+"</b>",rng("in",c.in||0,0,Math.max(1,((c.assetId&&assets.get(c.assetId)||{}).d||10)),.1))+
         f("Âm gốc clip <b>"+Math.round((c.vol==null?0:c.vol)*100)+"%</b>",rng("vol",c.vol==null?0:c.vol,0,1,.05));
+      const mk=c.mask;
+      insp+=f("Che thẻ tên",'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'+
+          '<button class="mini" data-che="ve">◻ '+(mk?"Khoanh lại":"Khoanh vùng")+'</button>'+
+          (mk?'<button class="mini" data-che="xoa">✖ Bỏ ô che</button>':'')+
+        '</div>');
+      if(mk)insp+=f("Kiểu che",'<div class="seg"><button data-che="thuong" aria-pressed="'+(!mk.vai)+'">Ô kín</button><button data-che="vai" aria-pressed="'+(!!mk.vai)+'">Nhãn di động</button></div>');
+      insp+='<div class="hint">Ô che của <b style="color:var(--fg)">riêng cảnh này</b>, lưu theo toạ độ ảnh gốc nên cảnh có zoom hay trôi thì ô vẫn bám đúng chỗ. '+
+        'Ảnh nào không có nhãn thì khỏi khoanh.<br><b style="color:var(--fg)">“Nhãn di động”</b> chỉ làm mờ chỗ nào là vải trắng — dùng cho clip video khi nhãn chạy theo máy quay: '+
+        'khoanh rộng trùm cả đường nhãn đi, da người và khăn màu vẫn giữ nguyên.</div>';
     } else if(sel.k==="sub"){ insp+=f("Nội dung",txt("text",c.text)) }
     else if(sel.k==="fx"){ insp+=f("Âm lượng <b>"+Math.round((c.vol||0)*100)+"%</b>",rng("vol",c.vol||0,0,1,.05)) }
     else { insp+=f("Âm lượng <b>"+Math.round((c.vol==null?1:c.vol)*100)+"%</b>",rng("vol",c.vol==null?1:c.vol,0,1,.05)) }
@@ -2629,6 +2752,12 @@ $("#right").addEventListener("click",e=>{
   if(b.dataset.sub){ snapshot(); P.sub.on=b.dataset.sub==="on"; draw(time); ui_right() }
   if(b.dataset.dup){ const c=selClip(); if(!c)return; snapshot();
     const n=JSON.parse(JSON.stringify(c)); n.id=uid(); n.start=c.start+c.dur; P.clips[sel.k].push(n); sel={k:sel.k,id:n.id}; allUI() }
+  if(b.dataset.che){ const c=selClip(); if(!c||sel.k!=="video")return;
+    const tt=b.dataset.che;
+    if(tt==="ve"){ batDauKhoanh(c) }
+    else if(tt==="xoa"){ snapshot(); delete c.mask; thoiKhoanh(); ui_right() }
+    else if(tt==="vai"||tt==="thuong"){ if(!c.mask)return; snapshot(); c.mask.vai=(tt==="vai"); draw(time); ui_right() }
+  }
 });
 function addTextLayer(){ snapshot();
   const n={id:uid(),style:"pop",text:"Chữ mới",start:+time.toFixed(2),dur:2.5,size:92,pos:30,color:"#ffffff"};
